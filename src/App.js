@@ -22,7 +22,7 @@ function App() {
       {/* TODO  Work on the component that renders the books*/}
       {/* TODO  Work on splitting the displayed books into currently reading,want to read, read*/}
       {/* TODO  Work on the moving of the books into the different categories listed above, this should enable a user to move the different books into categories of currently reading,want to read, read*/}
-      {/* TODO  !Work on the search functionality of the application*/}
+      {/* TODO  Work on the search functionality of the application*/}
     </div>
   );
 }
