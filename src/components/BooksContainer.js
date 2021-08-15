@@ -41,6 +41,7 @@ export default class BooksContainer extends Component {
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
     const bookTitle = valueToFilter[1];
+    console.log("🚀 ~ file: booksContainer.js ~", bookTitle, bookShelf);
     const { booksWithShelf } = this.state;
 
     const booksCopy = [...booksWithShelf];
@@ -138,7 +139,7 @@ export default class BooksContainer extends Component {
 
             <BooksByShelf
               books={booksData}
-              shelf="wishlist"
+              shelf="wantToRead"
               title="Want to read"
               handleDropdownChange={this.handleDropdownChange.bind(this)}
             />

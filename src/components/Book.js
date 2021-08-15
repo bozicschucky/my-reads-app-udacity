@@ -8,16 +8,16 @@ const Book = (props) => {
       <p className="book-author">By {props.author}</p>
 
       <div className="selection">
-        <label htmlFor="categories">select book to</label>:
+        <label htmlFor="categories">move book to</label>:
         <select
           name="categories"
           id="book-categories"
           onChange={props.handleDropdownChange}
         >
-          <option>Move</option>
+          <option>select book</option>
           <option value={`None,${props.title}`}>None</option>
           <option value={`read,${props.title}`}>read</option>
-          <option value={`wishlist,${props.title}`}>want to read</option>
+          <option value={`wantToRead,${props.title}`}>want to read</option>
           <option value={`currentlyReading,${props.title}`}>
             currently reading
           </option>

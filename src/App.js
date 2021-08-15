@@ -12,7 +12,6 @@ function App() {
           <Books />
         </div>
       </main>
-      {/* TODO  Work on the search functionality of the application*/}
     </div>
   );
 }
