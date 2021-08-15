@@ -1,38 +1,43 @@
-.App {
+/* create a grid with 4 equal columns display grid*/
+.book-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 1rem;
+}
+
+.book {
+  margin-top: 5px;
+  display: grid;
+  place-items: center;
+}
+.book-title,
+.book-author,
+.selection {
+  margin: 2px 2px;
+  font-size: 0.9rem;
+}
+
+.book-title,
+.book-author {
+  font-style: italic;
+  font-weight: bolder;
+}
+
+#app-header,
+h1 {
   text-align: center;
+  font-size: 1.3em;
+  /* font-family: "Courier New", Courier, monospace; */
+  font-style: italic;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* create a border on a div */
+.book {
+  border: 2px solid #2d2e2e;
 }
+/* make the content take up 80% width */
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.container {
+  margin-left: 15px;
+  margin-right: 15px;
 }
