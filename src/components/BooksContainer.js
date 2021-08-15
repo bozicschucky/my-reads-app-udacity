@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { getAll } from "../BooksAPI";
 import BooksByShelf from "./BookShelf";
+import Search from "./Search";
 
 export default class BooksContainer extends Component {
   // constructor
@@ -9,6 +10,8 @@ export default class BooksContainer extends Component {
     super(props);
     this.state = {
       booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
+      searchResults: [],
+      search: false,
     };
   }
   componentDidMount() {
@@ -17,7 +20,7 @@ export default class BooksContainer extends Component {
       const booksWithShelf = books.map((book) => {
         return {
           ...book,
-          shelf: "none",
+          shelf: "None",
         };
       });
       if (localStorage.getItem("books") === null) {
@@ -38,8 +41,7 @@ export default class BooksContainer extends Component {
     const { booksWithShelf } = this.state;
 
     const booksCopy = [...booksWithShelf];
-    //loop through the books
-    booksWithShelf.forEach((book) => {
+    booksCopy.forEach((book) => {
       //if the book is selected
       if (book.title === bookTitle) {
         book.shelf = bookShelf;
@@ -51,34 +53,66 @@ export default class BooksContainer extends Component {
       booksWithShelf: booksCopy,
     });
   }
+  onSearch(e) {
+    const searchTerm = e.target.value;
+    if (!searchTerm) {
+      this.setState({
+        search: false,
+      });
+    }
+    if (searchTerm) {
+      const books = JSON.parse(localStorage.getItem("books"));
+      const foundBooks = [];
+      books.forEach((book) => {
+        //if the book is selected
+        const searchByTitle =
+          book.title.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+        const authors = book.authors.join(",").toLowerCase();
+        const searchByAuthors = authors.indexOf(searchTerm.toLowerCase()) > -1;
+
+        if (searchByTitle || searchByAuthors) {
+          foundBooks.push(book);
+        }
+      });
+
+      this.setState({
+        searchResults: foundBooks,
+        search: true,
+      });
+    }
+  }
 
   render() {
+    const booksData = this.state.search
+      ? this.state.searchResults
+      : this.state.booksWithShelf;
     return (
       <div>
+        <Search onSearch={this.onSearch.bind(this)} />
         <div className="book-grid">
           <BooksByShelf
-            books={this.state.booksWithShelf}
+            books={booksData}
             shelf="None"
             title="All Books"
             handleDropdownChange={this.handleDropdownChange.bind(this)}
           />
 
           <BooksByShelf
-            books={this.state.booksWithShelf}
+            books={booksData}
             shelf="read"
             title="Read"
             handleDropdownChange={this.handleDropdownChange.bind(this)}
           />
 
           <BooksByShelf
-            books={this.state.booksWithShelf}
+            books={booksData}
             shelf="currentlyReading"
             title="Currently Reading"
             handleDropdownChange={this.handleDropdownChange.bind(this)}
           />
 
           <BooksByShelf
-            books={this.state.booksWithShelf}
+            books={booksData}
             shelf="wishlist"
             title="Want to read"
             handleDropdownChange={this.handleDropdownChange.bind(this)}
