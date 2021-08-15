@@ -1,5 +1,7 @@
 // import react
 import React, { Component } from "react";
+import { Route, Link } from "react-router-dom";
+import { createBrowserHistory } from "history";
 import { getAll } from "../BooksAPI";
 import BooksByShelf from "./BookShelf";
 import Search from "./Search";
@@ -12,6 +14,7 @@ export default class BooksContainer extends Component {
       booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
       searchResults: [],
       search: false,
+      goHome: false,
     };
   }
   componentDidMount() {
@@ -47,7 +50,7 @@ export default class BooksContainer extends Component {
         book.shelf = bookShelf;
       }
     });
-    // //set the new array as the books state
+    //set the new array as the books state
     localStorage.setItem("books", JSON.stringify(booksCopy));
     this.setState({
       booksWithShelf: booksCopy,
@@ -82,42 +85,65 @@ export default class BooksContainer extends Component {
     }
   }
 
+  handleSearchRoute(e) {
+    const history = createBrowserHistory();
+    const historyPath = history.location.pathname;
+    historyPath.includes("search")
+      ? this.setState({ search: false, goHome: true })
+      : this.setState({ search: false, goHome: false });
+  }
+
   render() {
     const booksData = this.state.search
       ? this.state.searchResults
       : this.state.booksWithShelf;
+    const history = createBrowserHistory();
+    const historyPath = history.location.pathname;
     return (
       <div>
-        <Search onSearch={this.onSearch.bind(this)} />
-        <div className="book-grid">
-          <BooksByShelf
-            books={booksData}
-            shelf="None"
-            title="All Books"
-            handleDropdownChange={this.handleDropdownChange.bind(this)}
-          />
+        <Route exact path="/search">
+          <Search onSearch={this.onSearch.bind(this)} />
+        </Route>
+        {historyPath.includes("search") ? (
+          <Link to="/" onClick={this.handleSearchRoute.bind(this)}>
+            Main Page
+          </Link>
+        ) : (
+          <Link to="/search" onClick={this.handleSearchRoute.bind(this)}>
+            Search Page
+          </Link>
+        )}
+        <Route path="/">
+          <div className="book-grid">
+            <BooksByShelf
+              books={booksData}
+              shelf="None"
+              title="All Books"
+              handleDropdownChange={this.handleDropdownChange.bind(this)}
+            />
 
-          <BooksByShelf
-            books={booksData}
-            shelf="read"
-            title="Read"
-            handleDropdownChange={this.handleDropdownChange.bind(this)}
-          />
+            <BooksByShelf
+              books={booksData}
+              shelf="read"
+              title="Read"
+              handleDropdownChange={this.handleDropdownChange.bind(this)}
+            />
 
-          <BooksByShelf
-            books={booksData}
-            shelf="currentlyReading"
-            title="Currently Reading"
-            handleDropdownChange={this.handleDropdownChange.bind(this)}
-          />
+            <BooksByShelf
+              books={booksData}
+              shelf="currentlyReading"
+              title="Currently Reading"
+              handleDropdownChange={this.handleDropdownChange.bind(this)}
+            />
 
-          <BooksByShelf
-            books={booksData}
-            shelf="wishlist"
-            title="Want to read"
-            handleDropdownChange={this.handleDropdownChange.bind(this)}
-          />
-        </div>
+            <BooksByShelf
+              books={booksData}
+              shelf="wishlist"
+              title="Want to read"
+              handleDropdownChange={this.handleDropdownChange.bind(this)}
+            />
+          </div>
+        </Route>
       </div>
     );
   }
