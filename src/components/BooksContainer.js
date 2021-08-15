@@ -108,18 +108,20 @@ export default class BooksContainer extends Component {
     const historyPath = history.location.pathname;
     return (
       <div>
-        <Route exact path="/search">
-          <Search onSearch={this.onSearch.bind(this)} />
-        </Route>
-        {historyPath.includes("search") ? (
-          <Link to="/" onClick={this.handleSearchRoute.bind(this)}>
-            Main Page
-          </Link>
-        ) : (
-          <Link to="/search" onClick={this.handleSearchRoute.bind(this)}>
-            Search Page
-          </Link>
-        )}
+        <div id="page-text">
+          <Route exact path="/search">
+            <Search onSearch={this.onSearch.bind(this)} />
+          </Route>
+          {historyPath.includes("search") ? (
+            <Link to="/" onClick={this.handleSearchRoute.bind(this)}>
+              Main Page
+            </Link>
+          ) : (
+            <Link to="/search" onClick={this.handleSearchRoute.bind(this)}>
+              Search Page
+            </Link>
+          )}
+        </div>
         <Route path="/">
           <div className="book-grid">
             <BooksByShelf

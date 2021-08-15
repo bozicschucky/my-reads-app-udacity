@@ -8,7 +8,7 @@ const Book = (props) => {
       <p className="book-author">By {props.author}</p>
 
       <div className="selection">
-        <label htmlFor="categories">move book to</label>:
+        <label htmlFor="categories">move to</label>:
         <select
           name="categories"
           id="book-categories"
@@ -18,9 +18,9 @@ const Book = (props) => {
           <option value={`None,${props.title}`}>None</option>
           <option value={`read,${props.title}`}>read</option>
           <option value={`currentlyReading,${props.title}`}>
-            <option value={`wantToRead,${props.title}`}>want to read</option>
             currently reading
           </option>
+          <option value={`wantToRead,${props.title}`}>want to read</option>
         </select>
       </div>
     </div>
