@@ -12,7 +12,7 @@ export default class BooksContainer extends Component {
     super(props);
     this.state = {
       booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
-      searchResults: [],
+      searchResultsMap: {},
       search: false,
       goHome: false,
     };
@@ -23,7 +23,6 @@ export default class BooksContainer extends Component {
       const booksWithShelf = books.map((book) => {
         return {
           ...book,
-          shelf: "None",
         };
       });
       if (localStorage.getItem("books") === null) {
@@ -41,14 +40,21 @@ export default class BooksContainer extends Component {
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
     const bookTitle = valueToFilter[1];
-    console.log("🚀 ~ file: booksContainer.js ~", bookTitle, bookShelf);
-    const { booksWithShelf } = this.state;
+    const searchResults = {};
+    const { booksWithShelf, searchResultsMap } = this.state;
 
     const booksCopy = [...booksWithShelf];
     booksCopy.forEach((book) => {
       //if the book is selected
       if (book.title === bookTitle) {
         book.shelf = bookShelf;
+
+        if (this.state.search) {
+          searchResults[book.title] = book;
+          this.setState({
+            searchResultsMap: { ...searchResultsMap, ...searchResults },
+          });
+        }
       }
     });
     //set the new array as the books state
@@ -59,6 +65,7 @@ export default class BooksContainer extends Component {
   }
   onSearch(e) {
     const searchTerm = e.target.value;
+    const results = {};
     if (!searchTerm) {
       this.setState({
         search: false,
@@ -66,7 +73,6 @@ export default class BooksContainer extends Component {
     }
     if (searchTerm) {
       const books = JSON.parse(localStorage.getItem("books"));
-      const foundBooks = [];
       books.forEach((book) => {
         //if the book is selected
         const searchByTitle =
@@ -75,12 +81,12 @@ export default class BooksContainer extends Component {
         const searchByAuthors = authors.indexOf(searchTerm.toLowerCase()) > -1;
 
         if (searchByTitle || searchByAuthors) {
-          foundBooks.push(book);
+          results[book.title] = book;
         }
       });
 
       this.setState({
-        searchResults: foundBooks,
+        searchResultsMap: results,
         search: true,
       });
     }
@@ -96,7 +102,7 @@ export default class BooksContainer extends Component {
 
   render() {
     const booksData = this.state.search
-      ? this.state.searchResults
+      ? Object.values(this.state.searchResultsMap)
       : this.state.booksWithShelf;
     const history = createBrowserHistory();
     const historyPath = history.location.pathname;

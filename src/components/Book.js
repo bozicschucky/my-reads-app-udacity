@@ -17,8 +17,8 @@ const Book = (props) => {
           <option>select book</option>
           <option value={`None,${props.title}`}>None</option>
           <option value={`read,${props.title}`}>read</option>
-          <option value={`wantToRead,${props.title}`}>want to read</option>
           <option value={`currentlyReading,${props.title}`}>
+            <option value={`wantToRead,${props.title}`}>want to read</option>
             currently reading
           </option>
         </select>
