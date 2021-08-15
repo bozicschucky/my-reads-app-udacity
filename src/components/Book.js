@@ -8,7 +8,7 @@ const Book = (props) => {
       <p className="book-author">By {props.author}</p>
 
       <div className="selection">
-        <label htmlFor="categories">select books to</label>:
+        <label htmlFor="categories">select book to</label>:
         <select
           name="categories"
           id="book-categories"

@@ -1,6 +1,8 @@
 import Book from "./Book";
 export default function BookShelf(props) {
-  const booksByShelf = props.books.filter((book) => book.shelf === props.shelf);
+  const booksByShelf = props.books.filter(
+    (book) => book.shelf.toLowerCase() === props.shelf.toLowerCase()
+  );
   return (
     <div className="book-shelf">
       <h1>{props.title}</h1>
