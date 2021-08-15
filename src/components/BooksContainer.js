@@ -1,74 +1,89 @@
 // import react
 import React, { Component } from "react";
-//import from BooksAPI.js
 import { getAll } from "../BooksAPI";
-import Book from "./Book";
+import BooksByShelf from "./BookShelf";
 
-// create a class component
 export default class BooksContainer extends Component {
   // constructor
   constructor(props) {
     super(props);
     this.state = {
-      books: [],
-      currentlyReading: [],
-      read: [],
-      wishlist: [],
+      booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
     };
   }
-  // componentDidMount
   componentDidMount() {
-    //async await fetch data
+    //async fetch data
     getAll().then((books) => {
-      this.setState({ books });
+      const booksWithShelf = books.map((book) => {
+        return {
+          ...book,
+          shelf: "none",
+        };
+      });
+      if (localStorage.getItem("books") === null) {
+        localStorage.setItem("books", JSON.stringify(booksWithShelf));
+        this.setState({ booksWithShelf: books });
+      } else {
+        const savedBooks = JSON.parse(localStorage.getItem("books")) || [];
+        this.setState({ booksWithShelf: savedBooks });
+      }
     });
   }
 
   //create a function that gets the selected dropdown value
   handleDropdownChange(e) {
-    //create a function that gets the selected dropdown value
     const valueToFilter = e.target.value.split(",");
-    const bookStore = valueToFilter[0];
+    const bookShelf = valueToFilter[0];
     const bookTitle = valueToFilter[1];
-    const bookCategory = this.state[bookStore];
-    const { books } = this.state;
-    console.log(
-      "🚀 ~ file: booksContainer.js ~ line 38 ~ BooksContainer ~ handleDropdownChange ~ bookCategory",
-      bookCategory
-    );
-    // //create a new array
-    let newBooks = [];
+    const { booksWithShelf } = this.state;
+
+    const booksCopy = [...booksWithShelf];
     //loop through the books
-    books.forEach((book) => {
+    booksWithShelf.forEach((book) => {
       //if the book is selected
       if (book.title === bookTitle) {
-        //add the book to the new array
-        newBooks.push(book);
+        book.shelf = bookShelf;
       }
     });
-    const booksWithNoDuplicates = [...new Set(newBooks)];
     // //set the new array as the books state
-    this.setState({ [bookStore]: [...bookCategory, ...newBooks] });
+    localStorage.setItem("books", JSON.stringify(booksCopy));
+    this.setState({
+      booksWithShelf: booksCopy,
+    });
   }
 
   render() {
-    console.log("the state -->, this.state", this.state);
     return (
       <div>
-        <h1>Books</h1>
-        {/* map through the books */}
-        {this.state.books.map((book) => {
-          return (
-            <Book
-              key={book.id}
-              title={book.title}
-              author={book.authors.join()}
-              image={book.imageLinks.thumbnail}
-              handleDropdownChange={this.handleDropdownChange.bind(this)}
-            />
-          );
-        })}
-        <Book />
+        <div className="book-grid">
+          <BooksByShelf
+            books={this.state.booksWithShelf}
+            shelf="None"
+            title="All Books"
+            handleDropdownChange={this.handleDropdownChange.bind(this)}
+          />
+
+          <BooksByShelf
+            books={this.state.booksWithShelf}
+            shelf="read"
+            title="Read"
+            handleDropdownChange={this.handleDropdownChange.bind(this)}
+          />
+
+          <BooksByShelf
+            books={this.state.booksWithShelf}
+            shelf="currentlyReading"
+            title="Currently Reading"
+            handleDropdownChange={this.handleDropdownChange.bind(this)}
+          />
+
+          <BooksByShelf
+            books={this.state.booksWithShelf}
+            shelf="wishlist"
+            title="Want to read"
+            handleDropdownChange={this.handleDropdownChange.bind(this)}
+          />
+        </div>
       </div>
     );
   }
