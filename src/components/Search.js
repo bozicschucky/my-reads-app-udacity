@@ -58,7 +58,7 @@ class Search extends Component {
           //iterate through the books from main page and find the book with matching book.title
           for (let i = 0; i < booksFromMainPage.length; i++) {
             const bookFromMainPage = booksFromMainPage[index];
-            if (bookFromMainPage.id === book.id) {
+            if (bookFromMainPage && bookFromMainPage.id === book.id) {
               console.log("updating the new book", bookFromMainPage, i);
               booksFromMainPage[i] = updatedBookShelf;
               break;
