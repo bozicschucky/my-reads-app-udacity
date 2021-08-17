@@ -1,4 +1,23 @@
+const selectOptions = ["None", "read", "currentlyReading", "wantToRead"];
 const Book = (props) => {
+  //generate select element with options
+  const options = (props) =>
+    selectOptions.map((option) => {
+      const selectedOption = props.shelf === option ? option : "";
+      console.log(
+        "🚀 ~ file: book.js ~ line 7 ~ selectOptions.map ~ selectedOption",
+        selectedOption
+      );
+      return (
+        <option
+          key={option}
+          value={`${option},${props.title}`}
+          selected={selectedOption}
+        >
+          {option}
+        </option>
+      );
+    });
   return (
     <div className="book">
       <div className="book-image">
@@ -14,13 +33,7 @@ const Book = (props) => {
           id="book-categories"
           onChange={props.handleDropdownChange}
         >
-          <option>select book</option>
-          <option value={`None,${props.title}`}>None</option>
-          <option value={`read,${props.title}`}>read</option>
-          <option value={`currentlyReading,${props.title}`}>
-            currently reading
-          </option>
-          <option value={`wantToRead,${props.title}`}>want to read</option>
+          {options(props)}
         </select>
       </div>
     </div>
