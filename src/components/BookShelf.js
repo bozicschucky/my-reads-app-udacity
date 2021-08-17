@@ -10,9 +10,10 @@ export default function BookShelf(props) {
         <Book
           key={book.id}
           title={book.title}
-          author={book.authors.join()}
-          image={book.imageLinks.thumbnail}
+          author={(book.authors && book.authors.join()) || "Unknown"}
+          image={(book.imageLinks && book.imageLinks.thumbnail) || "No image"}
           shelf={book.shelf}
+          bookId={book.id}
           handleDropdownChange={props.handleDropdownChange}
         />
       ))}

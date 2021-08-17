@@ -1,4 +1,18 @@
 const Book = (props) => {
+  const selectOptions = ["None", "read", "currentlyReading", "wantToRead"];
+  //generate select element with options
+  const selectOptionsArray = [
+    props.shelf,
+    ...selectOptions.filter((option) => option !== props.shelf),
+  ];
+  const options = (props) =>
+    selectOptionsArray.map((option) => {
+      return (
+        <option key={option} value={`${option},${props.title},${props.bookId}`}>
+          {option}
+        </option>
+      );
+    });
   return (
     <div className="book">
       <div className="book-image">
@@ -14,13 +28,7 @@ const Book = (props) => {
           id="book-categories"
           onChange={props.handleDropdownChange}
         >
-          <option>select book</option>
-          <option value={`None,${props.title}`}>None</option>
-          <option value={`read,${props.title}`}>read</option>
-          <option value={`currentlyReading,${props.title}`}>
-            currently reading
-          </option>
-          <option value={`wantToRead,${props.title}`}>want to read</option>
+          {options(props)}
         </select>
       </div>
     </div>
