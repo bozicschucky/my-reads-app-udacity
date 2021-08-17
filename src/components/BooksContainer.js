@@ -39,13 +39,13 @@ export default class BooksContainer extends Component {
   handleDropdownChange(e) {
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
-    const bookTitle = valueToFilter[1];
+    const bookId = valueToFilter[2];
     const { booksWithShelf } = this.state;
 
     const booksCopy = [...booksWithShelf];
     booksCopy.forEach((book) => {
       //if the book is selected
-      if (book.title === bookTitle) {
+      if (book.id === bookId) {
         book.shelf = bookShelf;
       }
     });

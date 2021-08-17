@@ -1,19 +1,14 @@
-const selectOptions = ["None", "read", "currentlyReading", "wantToRead"];
 const Book = (props) => {
+  const selectOptions = ["None", "read", "currentlyReading", "wantToRead"];
   //generate select element with options
+  const selectOptionsArray = [
+    props.shelf,
+    ...selectOptions.filter((option) => option !== props.shelf),
+  ];
   const options = (props) =>
-    selectOptions.map((option) => {
-      const selectedOption = props.shelf === option ? option : "";
-      console.log(
-        "🚀 ~ file: book.js ~ line 7 ~ selectOptions.map ~ selectedOption",
-        selectedOption
-      );
+    selectOptionsArray.map((option) => {
       return (
-        <option
-          key={option}
-          value={`${option},${props.title}`}
-          selected={selectedOption}
-        >
+        <option key={option} value={`${option},${props.title},${props.bookId}`}>
           {option}
         </option>
       );

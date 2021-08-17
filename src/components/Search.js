@@ -14,12 +14,7 @@ class Search extends Component {
   }
 
   handleChange(e) {
-    //
     search(e.target.value).then((data) => {
-      console.log(
-        "🚀 ~ file: search.js ~ line 22 ~ Search ~ search ~ data",
-        data
-      );
       const dataFromServer = !data || data["error"] ? [] : data;
       this.setState({
         searchResultsMap: dataFromServer.map((book) => {
@@ -37,45 +32,35 @@ class Search extends Component {
   }
 
   handleDropdownChange(e) {
-    console.log("change in dropDown -->", e.target.value);
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
     const booksFromMainPage = [...this.state.booksWithShelf];
     const searchField = valueToFilter[1];
+    const bookId = valueToFilter[2];
     const selectedBooks = { ...this.state.selectedSearchResults };
     const updatedBooks = [...this.state.searchResultsMap];
-    this.state.searchResultsMap.forEach(
-      // find first book with matching title and set the shelf of the book
-      (book, index) => {
-        if (
-          (book && book.title && book.title.includes(searchField)) ||
-          (book && book.author && book.author.includes(searchField))
-        ) {
-          const updatedBookShelf = { ...book, shelf: bookShelf };
-          updatedBooks[index] = updatedBookShelf;
-          selectedBooks[book.id] = updatedBookShelf;
+    const booksFromMainPageMap = {};
 
-          //iterate through the books from main page and find the book with matching book.title
-          for (let i = 0; i < booksFromMainPage.length; i++) {
-            const bookFromMainPage = booksFromMainPage[index];
-            if (bookFromMainPage && bookFromMainPage.id === book.id) {
-              console.log("updating the new book", bookFromMainPage, i);
-              booksFromMainPage[i] = updatedBookShelf;
-              break;
-            } else {
-              console.log(
-                "bookFromMainPage adding the new book",
-                bookFromMainPage
-              );
-              booksFromMainPage.push(updatedBookShelf);
-              break;
-            }
-          }
-        }
-        return book;
+    booksFromMainPage.forEach((bookElement) => {
+      booksFromMainPageMap[bookElement.id] = bookElement;
+    });
+
+    this.state.searchResultsMap.forEach((book, index) => {
+      if (
+        (book && book.id && book.id.includes(bookId)) ||
+        (book && book.author && book.author.includes(searchField))
+      ) {
+        const updatedBookShelf = { ...book, shelf: bookShelf };
+        updatedBooks[index] = updatedBookShelf;
+        selectedBooks[book.id] = updatedBookShelf;
+        booksFromMainPageMap[book.id] = updatedBookShelf;
       }
+      return book;
+    });
+    localStorage.setItem(
+      "books",
+      JSON.stringify(Object.values(booksFromMainPageMap))
     );
-    localStorage.setItem("books", JSON.stringify(booksFromMainPage));
     //  set state of books from search
     this.setState({
       searchResultsMap: updatedBooks,
@@ -83,7 +68,7 @@ class Search extends Component {
     });
   }
   render() {
-    console.log("state", this.state);
+    // console.log("state", this.state);
     return (
       <div className="search-input">
         <p>Welcome to the Search Page</p>
@@ -91,7 +76,6 @@ class Search extends Component {
           className="form-control"
           type="text"
           placeholder="Search for books"
-          // value={}
           onChange={this.handleChange.bind(this)}
         />
         <BooksShelfContainer

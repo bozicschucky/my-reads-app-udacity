@@ -13,6 +13,7 @@ export default function BookShelf(props) {
           author={(book.authors && book.authors.join()) || "Unknown"}
           image={(book.imageLinks && book.imageLinks.thumbnail) || "No image"}
           shelf={book.shelf}
+          bookId={book.id}
           handleDropdownChange={props.handleDropdownChange}
         />
       ))}
