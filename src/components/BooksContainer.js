@@ -43,6 +43,7 @@ export default class BooksContainer extends Component {
         } else {
           update(book, bookShelf);
         }
+
       }
     });
     this.setState({

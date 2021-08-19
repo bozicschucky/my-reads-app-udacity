@@ -23,7 +23,6 @@ class Search extends Component {
       this.setState({ booksWithShelf: booksMap });
     });
   }
-
   handleChange(e) {
     search(e.target.value).then((data) => {
       const dataFromServer = !data || data["error"] ? [] : data;
@@ -56,7 +55,6 @@ class Search extends Component {
     const bookId = valueToFilter[2];
     const selectedBooks = { ...this.state.selectedSearchResults };
     const updatedBooks = [...this.state.searchResultsMap];
-
     this.state.searchResultsMap.forEach((book, index) => {
       if (
         (book && book.id && book.id.includes(bookId)) ||
