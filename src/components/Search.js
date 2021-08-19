@@ -1,13 +1,12 @@
 // create a search component react
 import React, { Component } from "react";
-import { search } from "../BooksAPI";
+import { search, update } from "../BooksAPI";
 import BooksShelfContainer from "./BookShelfContainer";
 
 class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
       searchResultsMap: [],
       selectedSearchResults: {},
     };
@@ -18,6 +17,10 @@ class Search extends Component {
       const dataFromServer = !data || data["error"] ? [] : data;
       this.setState({
         searchResultsMap: dataFromServer.map((book) => {
+          // if a book has a shelf we don't add a default one
+          if (book && book.shelf) {
+            return book;
+          }
           return {
             ...book,
             shelf: "None",
@@ -34,16 +37,10 @@ class Search extends Component {
   handleDropdownChange(e) {
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
-    const booksFromMainPage = [...this.state.booksWithShelf];
     const searchField = valueToFilter[1];
     const bookId = valueToFilter[2];
     const selectedBooks = { ...this.state.selectedSearchResults };
     const updatedBooks = [...this.state.searchResultsMap];
-    const booksFromMainPageMap = {};
-
-    booksFromMainPage.forEach((bookElement) => {
-      booksFromMainPageMap[bookElement.id] = bookElement;
-    });
 
     this.state.searchResultsMap.forEach((book, index) => {
       if (
@@ -53,14 +50,10 @@ class Search extends Component {
         const updatedBookShelf = { ...book, shelf: bookShelf };
         updatedBooks[index] = updatedBookShelf;
         selectedBooks[book.id] = updatedBookShelf;
-        booksFromMainPageMap[book.id] = updatedBookShelf;
+        update(book, bookShelf);
       }
       return book;
     });
-    localStorage.setItem(
-      "books",
-      JSON.stringify(Object.values(booksFromMainPageMap))
-    );
     //  set state of books from search
     this.setState({
       searchResultsMap: updatedBooks,
@@ -68,7 +61,6 @@ class Search extends Component {
     });
   }
   render() {
-    // console.log("state", this.state);
     return (
       <div className="search-input">
         <p>Welcome to the Search Page</p>
