@@ -1,23 +1,40 @@
 // create a search component react
 import React, { Component } from "react";
-import { search } from "../BooksAPI";
+import { search, update, getAll } from "../BooksAPI";
 import BooksShelfContainer from "./BookShelfContainer";
 
 class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
+      booksWithShelf: {},
       searchResultsMap: [],
       selectedSearchResults: {},
     };
   }
 
+  componentDidMount() {
+    //async fetch data
+    const booksMap = {};
+    getAll().then((books) => {
+      books.forEach((book) => {
+        booksMap[book.id] = book;
+      });
+      this.setState({ booksWithShelf: booksMap });
+    });
+  }
   handleChange(e) {
     search(e.target.value).then((data) => {
       const dataFromServer = !data || data["error"] ? [] : data;
       this.setState({
         searchResultsMap: dataFromServer.map((book) => {
+          // if a book has a shelf we don't add a default one
+          if (this.state.booksWithShelf[book.id]) {
+            return {
+              ...book,
+              shelf: this.state.booksWithShelf[book.id]["shelf"],
+            };
+          }
           return {
             ...book,
             shelf: "None",
@@ -34,17 +51,10 @@ class Search extends Component {
   handleDropdownChange(e) {
     const valueToFilter = e.target.value.split(",");
     const bookShelf = valueToFilter[0];
-    const booksFromMainPage = [...this.state.booksWithShelf];
     const searchField = valueToFilter[1];
     const bookId = valueToFilter[2];
     const selectedBooks = { ...this.state.selectedSearchResults };
     const updatedBooks = [...this.state.searchResultsMap];
-    const booksFromMainPageMap = {};
-
-    booksFromMainPage.forEach((bookElement) => {
-      booksFromMainPageMap[bookElement.id] = bookElement;
-    });
-
     this.state.searchResultsMap.forEach((book, index) => {
       if (
         (book && book.id && book.id.includes(bookId)) ||
@@ -53,14 +63,15 @@ class Search extends Component {
         const updatedBookShelf = { ...book, shelf: bookShelf };
         updatedBooks[index] = updatedBookShelf;
         selectedBooks[book.id] = updatedBookShelf;
-        booksFromMainPageMap[book.id] = updatedBookShelf;
+        if (bookShelf === "None") {
+          book.shelf = "non";
+          update(book, "non");
+        } else {
+          update(book, bookShelf);
+        }
       }
       return book;
     });
-    localStorage.setItem(
-      "books",
-      JSON.stringify(Object.values(booksFromMainPageMap))
-    );
     //  set state of books from search
     this.setState({
       searchResultsMap: updatedBooks,
@@ -68,7 +79,6 @@ class Search extends Component {
     });
   }
   render() {
-    // console.log("state", this.state);
     return (
       <div className="search-input">
         <p>Welcome to the Search Page</p>

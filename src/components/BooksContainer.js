@@ -1,6 +1,6 @@
 // import react
 import React, { Component } from "react";
-import { getAll } from "../BooksAPI";
+import { getAll, update } from "../BooksAPI";
 import BooksShelfContainer from "./BookShelfContainer";
 
 export default class BooksContainer extends Component {
@@ -8,25 +8,14 @@ export default class BooksContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      booksWithShelf: JSON.parse(localStorage.getItem("books")) || [],
+      booksWithShelf: [],
     };
   }
 
   componentDidMount() {
     //async fetch data
     getAll().then((books) => {
-      const booksWithShelf = books.map((book) => {
-        return {
-          ...book,
-        };
-      });
-      if (localStorage.getItem("books") === null) {
-        localStorage.setItem("books", JSON.stringify(booksWithShelf));
-        this.setState({ booksWithShelf: books });
-      } else {
-        const savedBooks = JSON.parse(localStorage.getItem("books")) || [];
-        this.setState({ booksWithShelf: savedBooks });
-      }
+      this.setState({ booksWithShelf: books });
     });
   }
   componentWillUnmount() {
@@ -47,10 +36,16 @@ export default class BooksContainer extends Component {
       //if the book is selected
       if (book.id === bookId) {
         book.shelf = bookShelf;
+        if (bookShelf === "None") {
+          //prevents showing of books with the None shelf
+          book.shelf = "non";
+          update(book, "non");
+        } else {
+          update(book, bookShelf);
+        }
+
       }
     });
-    //set the new array as the books state
-    localStorage.setItem("books", JSON.stringify(booksCopy));
     this.setState({
       booksWithShelf: booksCopy,
     });
