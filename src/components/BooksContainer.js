@@ -15,13 +15,7 @@ export default class BooksContainer extends Component {
   componentDidMount() {
     //async fetch data
     getAll().then((books) => {
-      const booksWithShelf = books.map((book) => {
-        return {
-          ...book,
-        };
-      });
-
-      this.setState({ booksWithShelf: booksWithShelf });
+      this.setState({ booksWithShelf: books });
     });
   }
   componentWillUnmount() {

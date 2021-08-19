@@ -1,15 +1,27 @@
 // create a search component react
 import React, { Component } from "react";
-import { search, update } from "../BooksAPI";
+import { search, update, getAll } from "../BooksAPI";
 import BooksShelfContainer from "./BookShelfContainer";
 
 class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      booksWithShelf: {},
       searchResultsMap: [],
       selectedSearchResults: {},
     };
+  }
+
+  componentDidMount() {
+    //async fetch data
+    const booksMap = {};
+    getAll().then((books) => {
+      books.forEach((book) => {
+        booksMap[book.id] = book;
+      });
+      this.setState({ booksWithShelf: booksMap });
+    });
   }
 
   handleChange(e) {
@@ -18,8 +30,11 @@ class Search extends Component {
       this.setState({
         searchResultsMap: dataFromServer.map((book) => {
           // if a book has a shelf we don't add a default one
-          if (book && book.shelf) {
-            return book;
+          if (this.state.booksWithShelf[book.id]) {
+            return {
+              ...book,
+              shelf: this.state.booksWithShelf[book.id]["shelf"],
+            };
           }
           return {
             ...book,
@@ -50,7 +65,12 @@ class Search extends Component {
         const updatedBookShelf = { ...book, shelf: bookShelf };
         updatedBooks[index] = updatedBookShelf;
         selectedBooks[book.id] = updatedBookShelf;
-        update(book, bookShelf);
+        if (bookShelf === "None") {
+          book.shelf = "non";
+          update(book, "non");
+        } else {
+          update(book, bookShelf);
+        }
       }
       return book;
     });
